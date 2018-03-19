@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Usage: grep.py PATTERN FILE
+"""Usage: grep.py PATTERN FILE [FILE...]
 
-Print lines from FILE matching regular expression PATTERN.
+Print lines from each FILE matching regular expression PATTERN.
 
 """
 
@@ -18,24 +18,30 @@ def grep(pattern, lines):
 
 def parse_argv(argv):
     """Parse script arguments."""
-    pattern, path = argv
-    return pattern, path
+    # pokud dostaneme míň než dva parametry, ručně vyvoláme ValueError
+    if len(argv) < 2:
+        raise ValueError
+    # jinak bereme první parametr jako pattern a veškeré zbývající jako cesty k
+    # souborům na prohledání
+    pattern, paths = argv[0], argv[1:]
+    return pattern, paths
 
 
 def main(argv):
     """Main entry point of script."""
     try:
-        pattern, path = parse_argv(argv)
+        pattern, paths = parse_argv(argv)
     except ValueError:
         print(__doc__.strip(), file=sys.stderr)
         sys.exit(1)
-    try:
-        with open(path) as file:
-            grep(pattern, file)
-    except FileNotFoundError as err:
-        print(__doc__.strip(), file=sys.stderr)
-        print(err, file=sys.stderr)
-        sys.exit(1)
+    for path in paths:
+        try:
+            with open(path) as file:
+                grep(pattern, file)
+        except FileNotFoundError as err:
+            print(__doc__.strip(), file=sys.stderr)
+            print(err, file=sys.stderr)
+            sys.exit(1)
 
 
 if __name__ == "__main__":
