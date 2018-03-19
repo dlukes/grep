@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Usage: grep.py PATTERN FILE [FILE...]
 
-Print lines from each FILE matching regular expression PATTERN.
+Print lines from each FILE matching regular expression PATTERN. Pass `-` for
+standard input.
 
 """
 
 import sys
+import fileinput as fi
 import re
 
 
@@ -34,14 +36,12 @@ def main(argv):
     except ValueError:
         print(__doc__.strip(), file=sys.stderr)
         sys.exit(1)
-    for path in paths:
-        try:
-            with open(path) as file:
-                grep(pattern, file)
-        except FileNotFoundError as err:
-            print(__doc__.strip(), file=sys.stderr)
-            print(err, file=sys.stderr)
-            sys.exit(1)
+    try:
+        grep(pattern, fi.input(paths))
+    except FileNotFoundError as err:
+        print(__doc__.strip(), file=sys.stderr)
+        print(err, file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
