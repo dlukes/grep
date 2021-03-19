@@ -13,10 +13,10 @@ log.basicConfig(level=log.INFO)
 
 
 def grep(pattern, lines):
-    """Print lines matching pattern."""
+    """Yield lines matching pattern."""
     for line in lines:
         if re.search(pattern, line):
-            print(line, end="")
+            yield line
 
 
 def parse_argv(argv):
@@ -38,7 +38,8 @@ def main(argv):
     args = parse_argv(argv)
     log.info(f"Searching for {args.pattern!r} in {args.paths!r}.")
     try:
-        grep(args.pattern, fi.input(args.paths))
+        for matching_line in grep(args.pattern, fi.input(args.paths)):
+            print(matching_line, end="")
     except FileNotFoundError as err:
         log.critical(err)
         sys.exit(1)
