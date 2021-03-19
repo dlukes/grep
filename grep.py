@@ -13,7 +13,17 @@ log.basicConfig(level=log.INFO)
 
 
 def grep(pattern, lines):
-    """Yield lines matching pattern."""
+    """Yield lines matching pattern.
+
+    >>> list(grep("a", ["cat", "dog", "mat", "cot"]))
+    ['cat', 'mat']
+
+    The pattern is interpreted as a regular expression:
+
+    >>> list(grep("c.t", ["cat", "dog", "mat", "cot"]))
+    ['cat', 'cot']
+
+    """
     for line in lines:
         if re.search(pattern, line):
             yield line
